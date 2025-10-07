@@ -13,21 +13,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class WorkoutExercises {
+public class WorkoutExercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercise_id")
-    private Exercises exercise;
+    @JoinColumn(name = "exercise_id", nullable = false)
+    private Exercise exercise;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workout_id")
-    private Workouts workout;
+    @JoinColumn(name = "workout_id", nullable = false)
+    private Workout workout;
 
     @OneToMany(mappedBy = "workoutExercise", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkoutSets> workoutSets;
+    private List<WorkoutSet> workoutSets;
 
 
 }

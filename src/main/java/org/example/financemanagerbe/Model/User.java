@@ -27,7 +27,7 @@ public class User {
     private Integer age;
     private Double weight;
     private Integer height;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     private Integer tdee;
     private ActivityLevel activityLevel;
@@ -35,5 +35,11 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Workouts> workouts;
+    private List<Workout> workouts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Category> categories;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions;
 }

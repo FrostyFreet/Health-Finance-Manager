@@ -1,6 +1,5 @@
 package org.example.financemanagerbe.Model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,16 +13,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Transactions {
+public class RecurringTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long user_id;
-    private Long category_id;
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable = false)
+    private User user;
+    @ManyToOne
+    @JoinColumn(name="category_id", nullable = false)
+    private Category category;
     private Double amount;
     private String type;
+    private String frequency;
+    private LocalDateTime nextOccurrence;
     private String description;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
 }

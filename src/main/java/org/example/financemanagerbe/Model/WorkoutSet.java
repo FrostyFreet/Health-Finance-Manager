@@ -11,15 +11,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class WorkoutSets {
+public class WorkoutSet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double weight;
-    private Integer sets;
-    private Double reps;
+    private Integer numberOfSets;
+    private Double numberOfReps;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_exercise_id")
-    private WorkoutExercises workoutExercise;
+    private WorkoutExercise workoutExercise;
 }

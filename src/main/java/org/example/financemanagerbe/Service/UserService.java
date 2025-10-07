@@ -29,13 +29,13 @@ public class UserService {
 
         if (user.getId() != null || user.getSupabaseUserId() != null || user.getEmail() != null) throw new RuntimeException("Invalid update!");
 
-        foundUser.setFirstName(user.getFirstName());
-        foundUser.setLastName(user.getLastName());
-        foundUser.setAge(user.getAge());
-        foundUser.setWeight(user.getWeight());
-        foundUser.setHeight(user.getHeight());
-        foundUser.setTdee(user.getTdee());
-        foundUser.setActivityLevel(user.getActivityLevel());
+        if (user.getFirstName() != null) foundUser.setFirstName(user.getFirstName());
+        if (user.getLastName() != null) foundUser.setLastName(user.getLastName());
+        if (user.getAge() != null) foundUser.setAge(user.getAge());
+        if (user.getWeight() != null) foundUser.setWeight(user.getWeight());
+        if (user.getHeight() != null) foundUser.setHeight(user.getHeight());
+        if (user.getTdee() != null) foundUser.setTdee(user.getTdee());
+        if (user.getActivityLevel() != null) foundUser.setActivityLevel(user.getActivityLevel());
         userRepository.save(foundUser);
 
         return ResponseEntity.ok("Updated!");
