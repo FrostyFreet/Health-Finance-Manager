@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name="workout_sets")
 public class WorkoutSet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

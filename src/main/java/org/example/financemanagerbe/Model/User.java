@@ -24,12 +24,14 @@ public class User {
     private UUID supabaseUserId;
     private String lastName;
     private String firstName;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
     private Integer age;
     private Double weight;
     private Integer height;
     @Column(nullable = false, unique = true)
     private String email;
-    private Integer tdee;
+    private Double tdee;
     private ActivityLevel activityLevel;
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

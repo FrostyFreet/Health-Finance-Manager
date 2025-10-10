@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface WorkoutRepository extends JpaRepository<Workout,Long> {
     Optional<Workout> findByTitle(String title);
     List<Workout> findAllByUser(User user);
+
+    List<Workout> findAllByUserOrderByCreatedAtDesc(User currentUser);
+    Workout findByUserOrderByCreatedAtDesc(User currentUser);
 }
