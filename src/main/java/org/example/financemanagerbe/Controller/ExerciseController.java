@@ -30,7 +30,7 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.getAllExercises());
     }
     @GetMapping("/getExerciseByName")
-    public ResponseEntity<ExerciseDto> getExerciseByName(@RequestParam String name){
+    public ResponseEntity<List<ExerciseDto>> getExerciseByName(@RequestParam String name){
         return ResponseEntity.ok(exerciseService.getExerciseByName(name));
     }
 

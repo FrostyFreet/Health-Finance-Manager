@@ -34,9 +34,9 @@ public class ExerciseService {
         return exerciseRepistory.findAll().stream().map(ExerciseDto::new).toList();
     }
 
-    public ExerciseDto getExerciseByName(String name){
+    public List<ExerciseDto> getExerciseByName(String name){
 
-        return new ExerciseDto(exerciseRepistory.findByNameContainingIgnoreCase((name)));
+        return exerciseRepistory.findByNameContainingIgnoreCase((name)).stream().map(ExerciseDto::new).toList();
     }
 
     public List<ExerciseDto> getAllExercisesByMuscleGroup(String name){

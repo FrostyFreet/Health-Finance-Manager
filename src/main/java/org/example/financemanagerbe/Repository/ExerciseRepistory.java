@@ -9,5 +9,5 @@ public interface ExerciseRepistory extends JpaRepository<Exercise, Long> {
     Exercise findByName(String name);
     List<Exercise> findAllByMuscleGroup(String muscleGroup);
 
-    Exercise findByNameContainingIgnoreCase(String name);
+    List<Exercise> findByNameContainingIgnoreCase(String name);
 }
