@@ -7,7 +7,6 @@ import org.example.financemanagerbe.Model.WorkoutSet;
 import org.example.financemanagerbe.Repository.WorkoutExerciseRepository;
 import org.example.financemanagerbe.Repository.WorkoutSetRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -69,6 +68,5 @@ public class WorkoutSetService {
             return new WorkoutSetDto(foundExercise);
         }
         return null;
-
     }
 }

@@ -8,9 +8,11 @@ import org.example.financemanagerbe.Model.Gender;
 import org.example.financemanagerbe.Model.User;
 import org.example.financemanagerbe.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,26 +32,42 @@ public class UserService {
         return ResponseEntity.ok(new UserDto(foundUser));
     }
 
-    public ResponseEntity<String> register(RegisterRequest request) {
-        if (request == null) return ResponseEntity.badRequest().body("Invalid request");
-
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-
-        if (request.getSupabaseUserId() != null && !request.getSupabaseUserId().isBlank()) {
-            try {
-                UUID uuid = UUID.fromString(request.getSupabaseUserId());
-                user.setSupabaseUserId(uuid);
-            } catch (IllegalArgumentException ex) {
-                return ResponseEntity.badRequest().body("Invalid supabaseUserId");
-            }
+    public ResponseEntity<?> register(RegisterRequest request) {
+        if (request == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", "Invalid request"));
         }
 
-        userRepository.save(user);
+        try {
+            User user = new User();
+            user.setEmail(request.getEmail());
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
 
-        return ResponseEntity.ok("Registered!");
+            if (request.getSupabaseUserId() != null && !request.getSupabaseUserId().isBlank()) {
+                UUID uuid = UUID.fromString(request.getSupabaseUserId());
+                user.setSupabaseUserId(uuid);
+            }
+
+            User saved = userRepository.save(user);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(Map.of(
+                            "message", "User registered successfully",
+                            "userId", saved.getId(),
+                            "email", saved.getEmail()
+                    ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", "Invalid supabaseUserId"));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to register user"));
+        }
     }
 
     public ResponseEntity<UserRequest> updateUser(Long id, UserRequest user) {

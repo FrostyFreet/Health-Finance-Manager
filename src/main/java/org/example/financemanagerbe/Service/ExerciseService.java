@@ -1,32 +1,38 @@
 package org.example.financemanagerbe.Service;
 
 import org.example.financemanagerbe.DTO.ResponseDto.ExerciseDto;
+import org.example.financemanagerbe.DTO.ResponseDto.WeightProgressDto;
 import org.example.financemanagerbe.Model.Exercise;
+import org.example.financemanagerbe.Model.User;
+import org.example.financemanagerbe.Model.WorkoutSet;
 import org.example.financemanagerbe.Repository.ExerciseRepistory;
+import org.example.financemanagerbe.Repository.WorkoutSetRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class ExerciseService {
 
     private final ExerciseRepistory exerciseRepistory;
+    private final WorkoutSetRepository workoutSetRepository;
+    private final Utility utility;
 
-    public ExerciseService (ExerciseRepistory exerciseRepistory){
+    public ExerciseService (ExerciseRepistory exerciseRepistory, WorkoutSetRepository workoutSetRepository, Utility utility){
+        this.utility = utility;
         this.exerciseRepistory = exerciseRepistory;
+        this.workoutSetRepository = workoutSetRepository;
     }
 
-    public String createExercise(Exercise exercise){
-        try{
-            Exercise savedExercise = new Exercise();
-            savedExercise.setName(exercise.getName());
-            savedExercise.setMuscleGroup(exercise.getMuscleGroup());
-
-            exerciseRepistory.save(savedExercise);
-
-            return "Created";
+    public Exercise createExercise(Exercise exercise) {
+        try {
+            return exerciseRepistory.save(exercise);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Invalid exercise data", e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to create exercise", e);
         }
     }
 
@@ -41,6 +47,24 @@ public class ExerciseService {
 
     public List<ExerciseDto> getAllExercisesByMuscleGroup(String name){
         return exerciseRepistory.findAllByMuscleGroup(name).stream().map(ExerciseDto::new).toList();
+    }
+    public List<WeightProgressDto> getWeightProgress(
+            Long exerciseId,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    ) {
+        User currentUser = utility.getCurrentUser();
+        List<WorkoutSet> sets = workoutSetRepository
+                .findByExerciseAndDateRange(
+                        currentUser.getId(),
+                        exerciseId,
+                        startDate,
+                        endDate
+                );
+
+        return sets.stream()
+                .map(WeightProgressDto::new)
+                .toList();
     }
 
     public String updateExerciseById(Long id, Exercise exercise){
