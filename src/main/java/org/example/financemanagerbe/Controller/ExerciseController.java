@@ -73,6 +73,33 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.getAllExercisesByMuscleGroup(name));
     }
 
+
+    @GetMapping("/getHighestWeightLastWorkoutByExerciseId/{exerciseId}")
+    public ResponseEntity<?> getHighestWeightLastWorkoutByExerciseId(@PathVariable Long exerciseId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(exerciseService.getHighestWeightLastWorkoutByExerciseId(exerciseId));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Invalid exercise data"));
+        }
+
+    }
+
+    @GetMapping("/getHighestWeightEverUsedByExerciseId/{exerciseId}")
+    public ResponseEntity<?> getHighestWeightEverUsedByExerciseId(@PathVariable Long exerciseId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(exerciseService.getHighestWeightEverUsedByExerciseId(exerciseId));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Invalid exercise data"));
+        }
+
+    }
+
     @DeleteMapping("/deleteById/{id}")
     public ResponseEntity<String> deleteExerciseById(@PathVariable Long id){
         return ResponseEntity.ok(exerciseService.deleteExerciseById(id));

@@ -5,7 +5,8 @@ import org.example.financemanagerbe.DTO.ResponseDto.WeightProgressDto;
 import org.example.financemanagerbe.Model.Exercise;
 import org.example.financemanagerbe.Model.User;
 import org.example.financemanagerbe.Model.WorkoutSet;
-import org.example.financemanagerbe.Repository.ExerciseRepistory;
+import org.example.financemanagerbe.Repository.ExerciseRepository;
+import org.example.financemanagerbe.Repository.WorkoutExerciseRepository;
 import org.example.financemanagerbe.Repository.WorkoutSetRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -16,19 +17,21 @@ import java.util.List;
 @Service
 public class ExerciseService {
 
-    private final ExerciseRepistory exerciseRepistory;
+    private final ExerciseRepository exerciseRepository;
     private final WorkoutSetRepository workoutSetRepository;
+    private final WorkoutExerciseRepository workoutExerciseRepository;
     private final Utility utility;
 
-    public ExerciseService (ExerciseRepistory exerciseRepistory, WorkoutSetRepository workoutSetRepository, Utility utility){
+    public ExerciseService (ExerciseRepository exerciseRepository, WorkoutSetRepository workoutSetRepository, Utility utility, WorkoutExerciseRepository workoutExerciseRepository){
         this.utility = utility;
-        this.exerciseRepistory = exerciseRepistory;
+        this.workoutExerciseRepository = workoutExerciseRepository;
+        this.exerciseRepository = exerciseRepository;
         this.workoutSetRepository = workoutSetRepository;
     }
 
     public Exercise createExercise(Exercise exercise) {
         try {
-            return exerciseRepistory.save(exercise);
+            return exerciseRepository.save(exercise);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Invalid exercise data", e);
         } catch (Exception e) {
@@ -37,17 +40,38 @@ public class ExerciseService {
     }
 
     public List<ExerciseDto> getAllExercises(){
-        return exerciseRepistory.findAll().stream().map(ExerciseDto::new).toList();
+        return exerciseRepository.findAll().stream().map(ExerciseDto::new).toList();
     }
 
     public List<ExerciseDto> getExerciseByName(String name){
 
-        return exerciseRepistory.findByNameContainingIgnoreCase((name)).stream().map(ExerciseDto::new).toList();
+        return exerciseRepository.findByNameContainingIgnoreCase((name)).stream().map(ExerciseDto::new).toList();
     }
 
     public List<ExerciseDto> getAllExercisesByMuscleGroup(String name){
-        return exerciseRepistory.findAllByMuscleGroup(name).stream().map(ExerciseDto::new).toList();
+        return exerciseRepository.findAllByMuscleGroup(name).stream().map(ExerciseDto::new).toList();
     }
+
+    public WeightProgressDto getHighestWeightEverUsedByExerciseId(Long exerciseId){
+        WorkoutSet topSet = workoutSetRepository
+                .findTopByWorkoutExercise_Exercise_IdOrderByWeightDesc(exerciseId)
+                .orElseThrow(() -> new RuntimeException("No sets found for exercise id: " + exerciseId));
+        return new WeightProgressDto(topSet);
+    }
+
+    public WeightProgressDto getHighestWeightLastWorkoutByExerciseId(Long exerciseId){
+        var latestWe = workoutExerciseRepository
+                .findFirstByExercise_IdOrderByCreatedAtDesc(exerciseId)
+                .orElseThrow(() -> new RuntimeException("No workout_exercise found for exercise id: " + exerciseId));
+
+        WorkoutSet topSet = workoutSetRepository
+                .findTopByWorkoutExercise_IdOrderByWeightDesc(latestWe.getId())
+                .orElseThrow(() -> new RuntimeException("No sets found for latest workout_exercise id: " + latestWe.getId()));
+
+        return new WeightProgressDto(topSet);
+    }
+
+
     public List<WeightProgressDto> getWeightProgress(
             Long exerciseId,
             LocalDateTime startDate,
@@ -69,13 +93,13 @@ public class ExerciseService {
 
     public String updateExerciseById(Long id, Exercise exercise){
         try {
-            Exercise foundExercise = exerciseRepistory.findById(id).orElse(null);
+            Exercise foundExercise = exerciseRepository.findById(id).orElse(null);
             if (foundExercise == null) return "No exercise found!";
 
             if (exercise.getName() != null) foundExercise.setName(exercise.getName());
             if (exercise.getMuscleGroup() != null) foundExercise.setMuscleGroup(exercise.getMuscleGroup());
 
-            exerciseRepistory.save(foundExercise);
+            exerciseRepository.save(foundExercise);
 
             return "Updated!";
         } catch (Exception e) {
@@ -85,9 +109,9 @@ public class ExerciseService {
 
     public String deleteExerciseById(Long id){
         try {
-            Exercise foundExercise = exerciseRepistory.findById(id).orElse(null);
+            Exercise foundExercise = exerciseRepository.findById(id).orElse(null);
             if (foundExercise == null) return "No exercise found!";
-            exerciseRepistory.delete(foundExercise);
+            exerciseRepository.delete(foundExercise);
 
             return "Deleted!";
         } catch (Exception e) {

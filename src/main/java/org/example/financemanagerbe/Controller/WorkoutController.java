@@ -3,13 +3,18 @@ package org.example.financemanagerbe.Controller;
 import org.example.financemanagerbe.DTO.RequestDto.WorkoutRequest;
 import org.example.financemanagerbe.DTO.ResponseDto.WorkoutDetailDto;
 import org.example.financemanagerbe.DTO.ResponseDto.WorkoutDto;
+import org.example.financemanagerbe.DTO.ResponseDto.WorkoutExerciseDto;
+import org.example.financemanagerbe.Model.Exercise;
 import org.example.financemanagerbe.Model.Workout;
 import org.example.financemanagerbe.Service.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/workouts")
@@ -46,7 +51,7 @@ public class WorkoutController {
     }
     @GetMapping("/updateWorkoutName")
     public ResponseEntity<WorkoutDetailDto> updateWorkoutName(@RequestParam Long id, @RequestParam String name) {
-        return ResponseEntity.ok(workoutService.updateWorkoutName(id,name));
+        return ResponseEntity.ok(workoutService.updateWorkoutName(id, name));
     }
 
     @GetMapping("/getById/{id}")

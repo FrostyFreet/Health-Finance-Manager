@@ -4,7 +4,7 @@ import org.example.financemanagerbe.DTO.RequestDto.WorkoutRequest;
 import org.example.financemanagerbe.DTO.ResponseDto.WorkoutDetailDto;
 import org.example.financemanagerbe.DTO.ResponseDto.WorkoutDto;
 import org.example.financemanagerbe.Model.*;
-import org.example.financemanagerbe.Repository.ExerciseRepistory;
+import org.example.financemanagerbe.Repository.ExerciseRepository;
 import org.example.financemanagerbe.Repository.WorkoutExerciseRepository;
 import org.example.financemanagerbe.Repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,12 @@ public class WorkoutService {
 
     private final WorkoutRepository workoutRepository;
     private final WorkoutExerciseRepository workoutExerciseRepository;
-    private final ExerciseRepistory exerciseRepistory;
+    private final ExerciseRepository exerciseRepository;
     private final Utility utility;
 
     @Autowired
-    public WorkoutService (WorkoutRepository workoutRepository, Utility utility, ExerciseRepistory exerciseRepistory,WorkoutExerciseRepository workoutExerciseRepository){
-        this.exerciseRepistory = exerciseRepistory;
+    public WorkoutService (WorkoutRepository workoutRepository, Utility utility, ExerciseRepository exerciseRepository, WorkoutExerciseRepository workoutExerciseRepository){
+        this.exerciseRepository = exerciseRepository;
         this.workoutRepository = workoutRepository;
         this.workoutExerciseRepository = workoutExerciseRepository;
         this.utility = utility;
@@ -45,7 +45,7 @@ public class WorkoutService {
     }
 
     public String addExerciseToWorkout(Long id, String name){
-        Exercise foundExercise = exerciseRepistory.findByName(name);
+        Exercise foundExercise = exerciseRepository.findByName(name);
         Workout foundWorkout = workoutRepository.findById(id).orElse(null);
         if (foundExercise == null || foundWorkout == null){
             return "No exercise or workout found!";
