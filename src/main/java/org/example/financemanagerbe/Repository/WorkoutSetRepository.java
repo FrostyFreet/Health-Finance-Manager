@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface WorkoutSetRepository extends JpaRepository<WorkoutSet, Long> {
     List<WorkoutSet> findAllByWorkoutExercise_Id(Long workoutExerciseId);
-    Optional<WorkoutSet> findTopByWorkoutExercise_Exercise_IdOrderByWeightDesc(Long exerciseId);
-    Optional<WorkoutSet> findTopByWorkoutExercise_IdOrderByWeightDesc(Long workoutExerciseId);
+    Optional<WorkoutSet> findTopByWorkoutExercise_Exercise_IdOrderByWeightDescNumberOfRepsDesc(Long exerciseId);
+    Optional<WorkoutSet> findTopByWorkoutExercise_IdOrderByWeightDescNumberOfRepsDesc(Long workoutExerciseId);
 
     @Query("SELECT ws FROM WorkoutSet ws " +
             "JOIN ws.workoutExercise we " +

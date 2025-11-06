@@ -54,7 +54,7 @@ public class ExerciseService {
 
     public WeightProgressDto getHighestWeightEverUsedByExerciseId(Long exerciseId){
         WorkoutSet topSet = workoutSetRepository
-                .findTopByWorkoutExercise_Exercise_IdOrderByWeightDesc(exerciseId)
+                .findTopByWorkoutExercise_Exercise_IdOrderByWeightDescNumberOfRepsDesc(exerciseId)
                 .orElseThrow(() -> new RuntimeException("No sets found for exercise id: " + exerciseId));
         return new WeightProgressDto(topSet);
     }
@@ -65,7 +65,7 @@ public class ExerciseService {
                 .orElseThrow(() -> new RuntimeException("No workout_exercise found for exercise id: " + exerciseId));
 
         WorkoutSet topSet = workoutSetRepository
-                .findTopByWorkoutExercise_IdOrderByWeightDesc(latestWe.getId())
+                .findTopByWorkoutExercise_IdOrderByWeightDescNumberOfRepsDesc(latestWe.getId())
                 .orElseThrow(() -> new RuntimeException("No sets found for latest workout_exercise id: " + latestWe.getId()));
 
         return new WeightProgressDto(topSet);
