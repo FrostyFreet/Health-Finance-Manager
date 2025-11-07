@@ -60,15 +60,9 @@ public class ExerciseService {
     }
 
     public HighestWeightLastWorkoutProjection getHighestWeightLastWorkoutByExerciseId(Long exerciseId){
-        var latestWe = workoutExerciseRepository
-                .findFirstByExercise_IdOrderByCreatedAtDesc(exerciseId)
-                .orElseThrow(() -> new RuntimeException("No workout_exercise found for exercise id: " + exerciseId));
-
-        HighestWeightLastWorkoutProjection topSet = workoutExerciseRepository
-                .findHighestWeightLastWorkoutByExerciseIdAndUserId(latestWe.getId(), utility.getCurrentUser().getId())
-                .orElseThrow(() -> new RuntimeException("No sets found for latest workout_exercise id: " + latestWe.getId()));
-
-        return topSet;
+        return  workoutExerciseRepository
+                .findHighestWeightLastWorkoutByExerciseIdAndUserId(exerciseId, utility.getCurrentUser().getId())
+                .orElseThrow(() -> new RuntimeException("No sets found for latest workout_exercise id: " + exerciseId));
     }
 
 

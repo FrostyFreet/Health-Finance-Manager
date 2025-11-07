@@ -41,7 +41,8 @@ public interface WorkoutExerciseRepository extends JpaRepository<WorkoutExercise
                      JOIN exercises ex ON ex.id = we.exercise_id
                      JOIN workout_sets ws ON ws.workout_exercise_id = we.id
                      JOIN workouts w ON w.id = we.workout_id
-            WHERE ex.name = 'Fekvenyomás' AND user_id = 5
+            WHERE ex.id = :exerciseId
+                      AND w.user_id = :userId
             GROUP BY we.id, ex.id, ex.name, we.created_at, w.id, w.created_at, ws.number_of_reps, ws.weight
             ORDER BY we.created_at DESC, ws.weight DESC, ws.number_of_reps DESC
             LIMIT 1
