@@ -1,9 +1,9 @@
 package org.example.financemanagerbe.Service;
 
-import org.example.financemanagerbe.DTO.ResponseDto.ExerciseDto;
-import org.example.financemanagerbe.DTO.ResponseDto.WeightProgressDto;
+import org.example.financemanagerbe.DTO.ResponseDto.*;
 import org.example.financemanagerbe.Model.Exercise;
 import org.example.financemanagerbe.Model.User;
+import org.example.financemanagerbe.Model.WorkoutExercise;
 import org.example.financemanagerbe.Model.WorkoutSet;
 import org.example.financemanagerbe.Repository.ExerciseRepository;
 import org.example.financemanagerbe.Repository.WorkoutExerciseRepository;
@@ -52,23 +52,23 @@ public class ExerciseService {
         return exerciseRepository.findAllByMuscleGroup(name).stream().map(ExerciseDto::new).toList();
     }
 
-    public WeightProgressDto getHighestWeightEverUsedByExerciseId(Long exerciseId){
-        WorkoutSet topSet = workoutSetRepository
-                .findTopByWorkoutExercise_Exercise_IdOrderByWeightDescNumberOfRepsDesc(exerciseId)
+    public WorkoutSetDto getHighestWeightEverUsedByExerciseId(Long exerciseId){
+        WorkoutSet topSet = workoutExerciseRepository
+                .findHighestWeightEverByExerciseIdAndUserId(exerciseId, utility.getCurrentUser().getId())
                 .orElseThrow(() -> new RuntimeException("No sets found for exercise id: " + exerciseId));
-        return new WeightProgressDto(topSet);
+        return new WorkoutSetDto(topSet);
     }
 
-    public WeightProgressDto getHighestWeightLastWorkoutByExerciseId(Long exerciseId){
+    public HighestWeightLastWorkoutProjection getHighestWeightLastWorkoutByExerciseId(Long exerciseId){
         var latestWe = workoutExerciseRepository
                 .findFirstByExercise_IdOrderByCreatedAtDesc(exerciseId)
                 .orElseThrow(() -> new RuntimeException("No workout_exercise found for exercise id: " + exerciseId));
 
-        WorkoutSet topSet = workoutSetRepository
-                .findTopByWorkoutExercise_IdOrderByWeightDescNumberOfRepsDesc(latestWe.getId())
+        HighestWeightLastWorkoutProjection topSet = workoutExerciseRepository
+                .findHighestWeightLastWorkoutByExerciseIdAndUserId(latestWe.getId(), utility.getCurrentUser().getId())
                 .orElseThrow(() -> new RuntimeException("No sets found for latest workout_exercise id: " + latestWe.getId()));
 
-        return new WeightProgressDto(topSet);
+        return topSet;
     }
 
 
